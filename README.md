@@ -54,7 +54,16 @@ A full-featured project management application built with **Next.js 16**, **shad
 ```bash
 npm install
 cp .env.example .env    # configure DATABASE_URL and JWT_SECRET
+npm run db:start        # start PostgreSQL via Docker (see below)
 npm run dev              # starts on http://localhost:3000
+```
+
+### PostgreSQL via Docker
+
+```bash
+npm run db:start       # Pull + run PostgreSQL 16 container (port 5432)
+npm run db:stop        # Stop and remove the container
+npm run dev:db         # db:start + dev (one-shot)
 ```
 
 On first request, the DB schema and seed data are auto-created. **Delete `data/db.json` if you change the schema** — it won't regenerate automatically.
