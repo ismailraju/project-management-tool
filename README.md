@@ -24,10 +24,15 @@ A full-featured project management application built with **Next.js 16**, **shad
   - Tooltip on hover with full task summary
   - Drag-to-pan horizontal scrolling
 
+### Registration & Onboarding
+- **New organization sign-up** with company name and slug
+- **Join existing org** via invite code
+- **Plan limit enforcement** during registration
+
 ### Team & Settings
-- **Team member management** with invite-style creation
+- **Team member management** with role assignment (PATCH) and removal (DELETE)
 - **Plan limits** (max users/projects per tier)
-- **Organization settings** (owner/admin only)
+- **Organization settings** (owner/admin only) with name updates
 
 ---
 
@@ -80,45 +85,50 @@ On first request, the DB schema and seed data are auto-created. **Delete `data/d
 
 ## Test Coverage
 
-### 96 Vitest Tests (11 files)
+### 147 Vitest Tests (15 files)
 
-#### API Integration Tests — 56 tests
+#### API Integration Tests — 85 tests
 Mocked `@/lib/db` — no database required.
 
 | Module | Tests | Coverage |
 |--------|-------|----------|
-| Auth (login, me, logout) | 9 | 85% |
-| Projects (CRUD + RBAC) | 18 | 95% |
-| Tasks (CRUD + dependencies) | 18 | 95% |
+| Auth (login, me) | 10 | 85% |
+| Register (new org + invite code) | 11 | 94% |
+| Projects (CRUD + RBAC) | 17 | 95% |
+| Tasks (CRUD + dependencies) | 16 | 95% |
 | Members (tenant scoping) | 2 | — |
-| Team (CRUD + plan limits) | 7 | 83% |
+| Team (CRUD + plan limits) | 8 | 83% |
+| Team-info (GET/PUT + RBAC) | 7 | 85% |
+| Team-member (PATCH/DELETE + RBAC) | 14 | 89% |
 
-#### Component Tests — 40 tests
+#### Component Tests — 62 tests
 Rendered in jsdom with mocked `next/navigation`.
 
 | Component | Tests | What's tested |
 |-----------|-------|---------------|
-| AuthContext | 6 | Login flow, permission helpers, role checks |
-| Sidebar | 8 | Navigation items, user info, plan/role badges |
-| LoginPage | 9 | Form rendering, validation, loading states |  
-| DashboardPage | 4 | Stats cards, welcome message, New Project button |
+| AuthContext | 9 | Login flow, register, permission helpers, error handling |
+| Sidebar | 13 | Navigation items, collapse toggle, plan/role badges, role filtering |
+| LoginPage | 9 | Form rendering, validation, loading states, error display |
+| RegisterPage | 9 | New org / join tabs, form validation, loading states |
+| DashboardPage | 3 | Stats cards, welcome message, New Project button |
 | ProjectDetailPage | 6 | Project info, stat cards, task tabs, Gantt tab |
-| ProjectsPage | 7 | Project list, search, status filter, progress |
+| ProjectsPage | 8 | Project list, search, status filter, progress |
 
 Full coverage report across all `src/`:
 ```
-Statements: 28.86%   Branches: 29.04%   Functions: 23%   Lines: 29.84%
+Statements: 40.27%   Branches: 39.73%   Functions: 29.53%   Lines: 41.84%
 ```
 
 | Area | Statements | Branches | Functions | Lines |
 |------|-----------|----------|-----------|-------|
-| **API routes** | 85–95% | 82–97% | 100% | 85–95% |
+| **API routes** | 83–95% | 82–100% | 100% | 82–95% |
 | **Login page** | 100% | 83% | 100% | 100% |
+| **Register page** | 96% | 81% | 89% | 96% |
 | **Dashboard** | 93% | 78% | 100% | 93% |
-| **Projects page** | 76% | 47% | 60% | 78% |
+| **Projects page** | 89% | 54% | 75% | 89% |
 | **Project detail** | 47% | 51% | 38% | 50% |
-| **Sidebar** | 89% | 83% | 67% | 88% |
-| **Auth context** | 76% | 64% | 83% | 73% |
+| **Sidebar** | 100% | 92% | 100% | 100% |
+| **Auth context** | 98% | 82% | 100% | 98% |
 
 ### 12 E2E Tests (Playwright)
 Full browser tests covering login, dashboard, project CRUD, and Gantt tab. Requires dev server running on port 3000.
@@ -152,9 +162,9 @@ src/
 │   │   ├── projects/          # CRUD with RBAC
 │   │   ├── tasks/             # CRUD with dependency support
 │   │   ├── members/           # Tenant-scoped member list
-│   │   └── team/              # Team CRUD with plan limits
+│   │   └── team/              # Team CRUD, info, member mgmt
 │   ├── login/                 # Login page
-│   ├── register/              # Registration page
+│   ├── register/              # Registration page (new org + invite)
 │   ├── layout.tsx             # Root layout
 │   └── globals.css            # Tailwind v4 styles
 ├── components/
@@ -169,12 +179,25 @@ src/
 │   └── utils.ts               # cn() helper
 ├── types/
 │   └── index.ts               # All TypeScript interfaces
-└── __tests__/                 # Test files + mocks
+└── __tests__/                 # Test files + mocks (15 files, 147 tests)
     ├── setup.ts               # DB mock + seed data
     ├── component-setup.ts     # jsdom setup + Next.js mocks
     ├── helpers.ts             # Test request builders
-    ├── *.test.ts              # API integration tests
-    └── *.test.tsx             # Component tests
+    ├── auth.test.ts           # Login/me/logout API (10 tests)
+    ├── register.test.ts       # Register API (11 tests)
+    ├── projects.test.ts       # Projects CRUD + RBAC (17 tests)
+    ├── tasks.test.ts          # Tasks CRUD + dependencies (16 tests)
+    ├── members.test.ts        # Member list API (2 tests)
+    ├── team.test.ts           # Team CRUD + plan limits (8 tests)
+    ├── team-info.test.ts      # Team info GET/PUT (7 tests)
+    ├── team-member.test.ts    # Team member PATCH/DELETE (14 tests)
+    ├── auth-context.test.tsx  # Auth context component (9 tests)
+    ├── sidebar.test.tsx       # Sidebar component (13 tests)
+    ├── login.test.tsx         # Login page component (9 tests)
+    ├── register-page.test.tsx # Register page component (9 tests)
+    ├── dashboard.test.tsx     # Dashboard component (3 tests)
+    ├── project-detail.test.tsx# Project detail component (6 tests)
+    └── projects-page.test.tsx # Projects list component (8 tests)
 e2e/
 └── app.spec.ts                # Playwright E2E tests
 ```
@@ -185,7 +208,8 @@ e2e/
 
 ### Route Groups
 - `(app)/` — Protected routes (auth check in layout redirects to `/login`)
-- `login/` and `register/` — Public pages
+- `login/` — Public login page
+- `register/` — Public registration page (new org or join via invite code)
 
 ### Authentication
 - Session stored in HTTP-only cookie named `session`
@@ -222,7 +246,7 @@ canManageSettings() // owner, admin
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/api/auth/login` | No | Login, returns session cookie |
-| POST | `/api/auth/register` | No | Create account |
+| POST | `/api/auth/register` | No | Create account (new org or join via invite) |
 | POST | `/api/auth/logout` | Yes | Clear session |
 | GET | `/api/auth/me` | Yes | Current user info |
 | GET | `/api/projects` | Yes | List projects |
@@ -238,8 +262,10 @@ canManageSettings() // owner, admin
 | GET | `/api/members` | Yes | Active team members |
 | GET | `/api/team` | Yes | List team (admin+) |
 | POST | `/api/team` | Yes | Invite member (admin+) |
-| GET/PUT/DELETE | `/api/team/[id]` | Yes | Manage member |
-| GET | `/api/team/info` | Yes | Tenant info |
+| GET | `/api/team/info` | Yes | Tenant info (name, plan) |
+| PUT | `/api/team/info` | Yes | Update tenant info (owner only) |
+| PATCH | `/api/team/[id]` | Yes | Update member role (admin+) |
+| DELETE | `/api/team/[id]` | Yes | Remove member (admin+) |
 
 ---
 
