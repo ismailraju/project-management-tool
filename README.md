@@ -50,6 +50,34 @@ A full-featured project management application built with **Next.js 16**, **shad
 
 ---
 
+## Build & Deploy
+
+### Build for Production
+
+```bash
+npm run build    # TypeScript check + production build
+npm run start    # Start production server on http://localhost:3000
+```
+
+### Deploy to Vercel
+
+This project is optimized for [Vercel](https://vercel.com):
+
+1. Push your repo to GitHub/GitLab/Bitbucket
+2. Import the project on Vercel
+3. Set these environment variables in the Vercel dashboard:
+
+   | Variable | Description |
+   |----------|-------------|
+   | `DATABASE_URL` | PostgreSQL connection string (e.g. from Vercel Postgres, Neon, or Supabase) |
+   | `JWT_SECRET` | Random 64-char hex string (`openssl rand -hex 32`) |
+
+4. Deploy — Vercel auto-detects Next.js and runs `npm run build`
+
+> **Note:** The dev-mode JSON database (`data/db.json`) is **not** used in production. You need a real PostgreSQL instance. Schema and seed data are auto-created on first request.
+
+---
+
 ## Getting Started
 
 ### Prerequisites
