@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertCircle, Loader2 } from 'lucide-react';
 
 export default function RegisterPage() {
-  const router = useRouter();
   const { register } = useAuth();
   const [mode, setMode] = useState<'new' | 'join'>('new');
   const [formData, setFormData] = useState({

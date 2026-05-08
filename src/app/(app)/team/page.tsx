@@ -52,20 +52,6 @@ interface TeamInfo {
   inviteCode: string;
 }
 
-const roleLabels: Record<string, string> = {
-  owner: 'Owner',
-  admin: 'Admin',
-  manager: 'Manager',
-  member: 'Member'
-};
-
-const roleColors: Record<string, string> = {
-  owner: 'bg-amber-100 text-amber-700',
-  admin: 'bg-purple-100 text-purple-700',
-  manager: 'bg-blue-100 text-blue-700',
-  member: 'bg-zinc-100 text-zinc-700'
-};
-
 const planColors: Record<string, string> = {
   free: 'bg-zinc-100 text-zinc-700',
   starter: 'bg-blue-100 text-blue-700',
@@ -88,10 +74,7 @@ export default function TeamPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!canManageUsers()) {
-      setLoading(false);
-      return;
-    }
+    if (!canManageUsers()) return;
     fetchTeam();
   }, [canManageUsers]);
 
@@ -107,8 +90,8 @@ export default function TeamPage() {
       
       setTeamInfo(infoData);
       setMembers(membersData);
-    } catch (err) {
-      console.error('Error fetching team:', err);
+    } catch {
+      console.error('Error fetching team:');
     } finally {
       setLoading(false);
     }
@@ -134,7 +117,7 @@ export default function TeamPage() {
       setAddDialogOpen(false);
       setNewMember({ name: '', email: '', password: '', role: 'member' });
       await fetchTeam();
-    } catch (err) {
+    } catch {
       setError('Failed to add member');
     }
   }
@@ -148,8 +131,8 @@ export default function TeamPage() {
       if (res.ok) {
         await fetchTeam();
       }
-    } catch (err) {
-      console.error('Error deleting member:', err);
+    } catch {
+      console.error('Error deleting member:');
     }
   }
 
@@ -165,8 +148,8 @@ export default function TeamPage() {
         const data = await res.json();
         setMembers(members.map(m => m.id === id ? { ...m, role: data.role } : m));
       }
-    } catch (err) {
-      console.error('Error updating role:', err);
+    } catch {
+      console.error('Error updating role:');
     }
   }
 

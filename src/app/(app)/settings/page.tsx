@@ -4,15 +4,11 @@ import { useAuth } from '@/contexts/auth-context';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { useState } from 'react';
-import { Loader2 } from 'lucide-react';
 
 export default function SettingsPage() {
   const { user, canManageSettings } = useAuth();
-  const [loading, setLoading] = useState(false);
 
   return (
     <div className="p-8 space-y-6 max-w-3xl">

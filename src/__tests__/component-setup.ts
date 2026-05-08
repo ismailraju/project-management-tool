@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-require-imports */
 import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 

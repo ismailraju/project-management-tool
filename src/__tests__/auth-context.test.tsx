@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { AuthProvider, useAuth } from '@/contexts/auth-context';
@@ -99,7 +100,6 @@ describe('AuthContext', () => {
         ok: false,
         json: () => Promise.resolve({ error: 'Invalid credentials' }),
       });
-    const loginFn = vi.fn();
     function LoginTest() {
       const { login } = useAuth();
       return (

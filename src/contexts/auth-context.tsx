@@ -38,22 +38,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    checkAuth();
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => { if (data.user) setUser(data.user); })
+      .catch(error => console.error('Auth check failed:', error))
+      .finally(() => setLoading(false));
   }, []);
-
-  async function checkAuth() {
-    try {
-      const res = await fetch('/api/auth/me');
-      const data = await res.json();
-      if (data.user) {
-        setUser(data.user);
-      }
-    } catch (error) {
-      console.error('Auth check failed:', error);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function login(email: string, password: string) {
     const res = await fetch('/api/auth/login', {

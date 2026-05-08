@@ -26,7 +26,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { buttonVariants } from '@/components/ui/button';
@@ -72,15 +71,6 @@ export default function ProjectsPage() {
     const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
-
-  const deleteProject = async (id: string) => {
-    if (confirm('Are you sure you want to delete this project? All associated tasks will also be deleted.')) {
-      const res = await fetch(`/api/projects/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        setProjects(projects.filter(p => p.id !== id));
-      }
-    }
-  };
 
   if (loading) {
     return (

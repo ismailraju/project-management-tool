@@ -38,7 +38,7 @@ export async function GET(request: Request) {
         color: user.color
       }
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ user: null });
   }
 }

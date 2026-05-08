@@ -1,9 +1,10 @@
-import { vi, beforeEach } from 'vitest';
+/* eslint-disable @typescript-eslint/no-require-imports */
+import { vi } from 'vitest';
 import { Task, Project, User, Tenant } from '@/types';
 
 vi.mock('@/lib/db', () => {
+  const crypto = require('crypto');
   const hashPassword = (password: string) => {
-    const crypto = require('crypto');
     return crypto.createHash('sha256').update(password).digest('hex');
   };
 
@@ -259,7 +260,7 @@ vi.mock('@/lib/db', () => {
 
     canManageUsers: vi.fn((role: string) => ['owner', 'admin'].includes(role)),
     canManageProjects: vi.fn((role: string) => ['owner', 'admin', 'manager'].includes(role)),
-    canEditTasks: vi.fn((role: string) => true),
+    canEditTasks: vi.fn(() => true),
     canDeleteProject: vi.fn((role: string) => ['owner', 'admin'].includes(role)),
     canManageSettings: vi.fn((role: string) => ['owner', 'admin'].includes(role)),
   };

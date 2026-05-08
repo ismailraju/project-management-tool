@@ -1,10 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/contexts/auth-context';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Users, CheckSquare, Clock, AlertCircle } from 'lucide-react';
+import { CheckSquare, Clock, AlertCircle } from 'lucide-react';
 
 interface TeamMember {
   id: string;
@@ -30,7 +29,6 @@ const roleLabels: Record<string, string> = {
 };
 
 export default function MembersPage() {
-  const { user } = useAuth();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
