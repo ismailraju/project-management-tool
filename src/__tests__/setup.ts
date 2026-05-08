@@ -252,6 +252,10 @@ vi.mock('@/lib/db', () => {
 
     deleteUser: vi.fn(),
 
+    createTenant: vi.fn(),
+
+    updateTenant: vi.fn(),
+
     generateId,
 
     hashPasswordUtil,

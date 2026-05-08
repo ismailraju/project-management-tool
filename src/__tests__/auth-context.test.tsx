@@ -128,4 +128,91 @@ describe('AuthContext', () => {
       unmount();
     }
   });
+
+  it('register calls fetch and sets user', async () => {
+    (global.fetch as any)
+      .mockResolvedValueOnce({ json: () => Promise.resolve({}) }) // initial check
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          user: { id: '3', name: 'New User', role: 'owner', email: 'n@b.com', tenantId: 't2', tenantName: 'T2', tenantPlan: 'free', avatar: '', color: '#000' },
+        }),
+      });
+    function RegisterTest() {
+      const { register, user } = useAuth();
+      return (
+        <div>
+          <div data-testid="user">{user?.name || 'null'}</div>
+          <button onClick={() => register({ email: 'n@b.com', password: 'pass', name: 'New User', companyName: 'My Co' })}>Register</button>
+        </div>
+      );
+    }
+    render(<AuthProvider><RegisterTest /></AuthProvider>);
+    await vi.waitFor(() => expect(screen.getByTestId('user').textContent).toBe('null'));
+    fireEvent.click(screen.getByText('Register'));
+    await vi.waitFor(() => expect(screen.getByTestId('user').textContent).toBe('New User'));
+  });
+
+  it('register throws on error response', async () => {
+    (global.fetch as any)
+      .mockResolvedValueOnce({ json: () => Promise.resolve({}) })
+      .mockResolvedValueOnce({
+        ok: false,
+        json: () => Promise.resolve({ error: 'Email taken' }),
+      });
+    let caught: Error | null = null;
+    function RegisterTest() {
+      const { register } = useAuth();
+      return (
+        <div>
+          <button onClick={async () => { try { await register({ email: 'x', password: 'p', name: 'X' }); } catch (e) { caught = e as Error; } }}>Reg</button>
+        </div>
+      );
+    }
+    render(<AuthProvider><RegisterTest /></AuthProvider>);
+    await vi.waitFor(() => expect(screen.getByText('Reg')).toBeInTheDocument());
+    fireEvent.click(screen.getByText('Reg'));
+    await vi.waitFor(() => expect(caught).not.toBeNull());
+    expect(caught!.message).toContain('Email taken');
+  });
+
+  it('logout clears user', async () => {
+    (global.fetch as any)
+      .mockResolvedValueOnce({
+        json: () => Promise.resolve({
+          user: { id: '1', name: 'Test User', role: 'owner', email: 'a@b.com', tenantId: 't1', tenantName: 'T', tenantPlan: 'free', avatar: '', color: '#000' },
+        }),
+      })
+      .mockResolvedValueOnce({ json: () => Promise.resolve({}) });
+    function LogoutTest() {
+      const { logout, user } = useAuth();
+      return (
+        <div>
+          <div data-testid="user">{user?.name || 'null'}</div>
+          <button onClick={() => logout()}>Logout</button>
+        </div>
+      );
+    }
+    render(<AuthProvider><LogoutTest /></AuthProvider>);
+    await vi.waitFor(() => expect(screen.getByTestId('user').textContent).toBe('Test User'));
+    fireEvent.click(screen.getByText('Logout'));
+    await vi.waitFor(() => {
+      expect(screen.getByTestId('user').textContent).toBe('null');
+    });
+  });
+
+  it('handles fetch failure gracefully', async () => {
+    (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
+    renderWithProvider();
+    await vi.waitFor(() => {
+      expect(screen.getByTestId('loading').textContent).toBe('done');
+    });
+    expect(screen.getByTestId('user').textContent).toBe('null');
+  });
+});
+
+describe('useAuth outside provider', () => {
+  it('throws error when used outside AuthProvider', () => {
+    expect(() => render(<TestConsumer />)).toThrow('useAuth must be used within an AuthProvider');
+  });
 });
