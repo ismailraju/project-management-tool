@@ -4,6 +4,8 @@ A full-featured project management application built with **Next.js 16**, **shad
 
 ---
 
+> **Deployed at:** [https://opencodetest.vercel.app/](https://opencodetest.vercel.app/)
+
 ## Features
 
 ### Core
