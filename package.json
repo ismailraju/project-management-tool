@@ -10,7 +10,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "db:start": "docker run -d --name projectflow-pg -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=projectflow -p 5432:5432 postgres:16",
+    "db:stop": "docker stop projectflow-pg && docker rm projectflow-pg",
+    "dev:db": "npm run db:start && npm run dev"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
